@@ -1,0 +1,29 @@
+{
+  "name": "logstash",
+  "version": "1.0.0",
+  "description": "Robust logger for browser and node that sends log messages to logstash http server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moooji/logstash.git"
+  },
+  "keywords": [
+    "logstash",
+    "logging",
+    "log",
+    "logger",
+    "browser"
+  ],
+  "author": "Steffen Strätz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/moooji/logstash/issues"
+  },
+  "homepage": "https://github.com/moooji/logstash#readme",
+  "dependencies": {
+    "axios": "^0.15.2"
+  }
+}
