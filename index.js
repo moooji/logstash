@@ -63,10 +63,7 @@ function create(options) {
   Logstash.prototype.log = function log(level, message, fields) {
     const event = { level, message, fields };
     event['@timestamp'] = new Date().toISOString();
-
-    if (this.tags) {
-      event.tags = this.tags;
-    }
+    event['@tags'] = this.tags;
 
     // If we are in a browser
     // attach navigator metadata
