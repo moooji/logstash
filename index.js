@@ -15,7 +15,7 @@ if (window) {
   }
 }
 
-function create(options) {
+module.exports.create = function create(options) {
   /**
    * Constructor
    */
@@ -120,5 +120,3 @@ function create(options) {
 
   return log;
 }
-
-module.exports.create = create;
