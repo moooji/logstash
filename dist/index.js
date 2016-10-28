@@ -1,17 +1,21 @@
-const axios = require('axios');
-const loggers = [];
+'use strict';
+
+var axios = require('axios');
+var loggers = [];
 
 // If we are in a browser
 // catch window errors (uncaught exceptions)
 if (window) {
   window.onerror = function onError(message, url, lineNo, columnNo, err) {
-    const fields = {};
+    var fields = {};
 
     if (err && err.stack) {
       fields.stack = err.stack;
     }
 
-    loggers.forEach(log => log.error(message, fields));
+    loggers.forEach(function (log) {
+      return log.error(message, fields);
+    });
   };
 }
 
@@ -30,14 +34,16 @@ module.exports.create = function create(options) {
   }
 
   Logstash.prototype._trySendEvent = function _trySendEvent() {
+    var _this = this;
+
     if (!this.queue.length || this.isSending) {
       return;
     }
 
     this.isSending = true;
-    const event = this.queue.shift();
+    var event = this.queue.shift();
 
-    const request = {
+    var request = {
       url: this.url,
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
@@ -45,21 +51,21 @@ module.exports.create = function create(options) {
     };
 
     // HTTP request
-    axios(request).then(() => {
-      this.isSending = false;
-      setTimeout(this._trySendEvent.bind(this), this.sendDelay);
-    }).catch(() => {
+    axios(request).then(function () {
+      _this.isSending = false;
+      setTimeout(_this._trySendEvent.bind(_this), _this.sendDelay);
+    }).catch(function () {
       // If we could not send the event,
       // put it back into queue
-      this.queue.unshift(event);
+      _this.queue.unshift(event);
 
-      this.isSending = false;
-      setTimeout(this._trySendEvent.bind(this), this.retryDelay);
+      _this.isSending = false;
+      setTimeout(_this._trySendEvent.bind(_this), _this.retryDelay);
     });
   };
 
   Logstash.prototype.log = function log(level, message, fields) {
-    const event = { level, message, fields };
+    var event = { level: level, message: message, fields: fields };
     event['@timestamp'] = new Date().toISOString();
     event['@tags'] = this.tags;
 
@@ -113,7 +119,7 @@ module.exports.create = function create(options) {
   };
 
   // Create logger instance
-  const log = new Logstash(options);
+  var log = new Logstash(options);
   loggers.push(log);
 
   return log;
