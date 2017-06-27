@@ -69,9 +69,8 @@ module.exports.create = function create(options) {
     event['@timestamp'] = new Date().toISOString();
     event['@tags'] = this.tags;
 
-    // If we are in a browser
-    // attach navigator metadata
-    if (navigator) {
+    // Navigator metadata
+    if (typeof navigator !== 'undefined') {
       event.navigator = {
         cookieEnabled: navigator.cookieEnabled,
         geoLocation: navigator.geoLocation,
@@ -84,9 +83,8 @@ module.exports.create = function create(options) {
       };
     }
 
-    // If we are in a browser
-    // attach location metadata
-    if (location) {
+    // Location metadata
+    if (typeof location !== 'undefined') {
       event.location = {
         search: location.search,
         pathname: location.pathname,
