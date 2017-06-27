@@ -61,7 +61,8 @@ module.exports.create = function create(options) {
   }
 
   Logstash.prototype.log = function log(level, message, fields) {
-    const event = { level, message, fields };
+    const event = { level, fields };
+    
     event['@timestamp'] = new Date().toISOString();
     event['@tags'] = this.tags;
 
@@ -108,8 +109,12 @@ module.exports.create = function create(options) {
     this.log('warn', message, fields);
   }
 
-  Logstash.prototype.error = function error(message, fields) {
-    this.log('error', message, fields);
+  Logstash.prototype.error = function error(err, fields) {
+    if (err instanceof Error) {
+      this.log('error', err.message, Object.assign({ stack: err.stack }, fields));
+    } else {
+      this.log('error', err, fields);
+    }
   }
 
   // Create logger instance
