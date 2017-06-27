@@ -1,6 +1,6 @@
 {
   "name": "logstash",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "Robust logger for browser and node that sends log messages to logstash http server",
   "main": "dist/index.js",
   "scripts": {
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/moooji/logstash#readme",
   "dependencies": {
-    "axios": "^0.15.2"
+    "axios": "^0.16.2"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
