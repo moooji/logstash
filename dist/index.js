@@ -5,7 +5,7 @@ var loggers = [];
 
 // If we are in a browser
 // catch window errors (uncaught exceptions)
-if (window) {
+if (typeof window === 'undefined') {
   window.onerror = function onError(message, url, lineNo, columnNo, err) {
     var fields = {};
 
