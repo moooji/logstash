@@ -65,7 +65,7 @@ module.exports.create = function create(options) {
   };
 
   Logstash.prototype.log = function log(level, message, fields) {
-    var event = { level: level, fields: fields };
+    var event = { level: level, fields: fields, message: message };
 
     event['@timestamp'] = new Date().toISOString();
     event['@tags'] = this.tags;
