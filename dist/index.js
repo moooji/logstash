@@ -29,6 +29,7 @@ module.exports.create = function create(options) {
     this.level = options.level || 'info';
     this.sendDelay = options.sendDelay || 100;
     this.retryDelay = options.retryDelay || 2000;
+    this.muteConsole = options.muteConsole === true || false;
     this.isSending = false;
     this.queue = [];
   }
@@ -99,6 +100,18 @@ module.exports.create = function create(options) {
 
     this.queue.push(event);
     this._trySendEvent();
+
+    if (this.muteConsole) {
+      return;
+    }
+
+    var fieldsStr = fields ? ' - ' + JSON.stringify(fields) : '';
+
+    if (level === 'warn' || level === 'error') {
+      console.error('' + message + fieldsStr);
+    } else {
+      console.info('' + message + fieldsStr);
+    }
   };
 
   Logstash.prototype.debug = function debug(message, fields) {
