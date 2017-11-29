@@ -1,7 +1,4 @@
-# Logstash logger
-
-```
-const createLogstash = require('logstash');
+const createLogstash = require('./src');
 
 // required
 const url = process.env.LOGSTASH_URL;
@@ -13,5 +10,6 @@ const level = "info";
 // Create logger instance
 const logger = createLogstash(url, tags, level);
 
-logger.info("Hello Logger!", { data: 123 });
-```
+for (let i=0; i < 1000; i++) {
+    logger.info("Hello Logger!", { data: 123 });
+}
