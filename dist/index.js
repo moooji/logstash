@@ -1,6 +1,8 @@
 "use strict";
 
-var axios = require('axios');
+var axios = require("axios");
+var axiosRetry = require("axios-retry");
+var PQueue = require("p-queue");
 
 function create(url, tags, level, options) {
   return new Logstash(url, tags, level, options);
@@ -8,6 +10,9 @@ function create(url, tags, level, options) {
 
 function Logstash(url) {
   var tags = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+
+  var _this = this;
+
   var level = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "info";
   var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
@@ -18,54 +23,49 @@ function Logstash(url) {
   this.url = url;
   this.tags = tags;
   this.level = level;
-  this.sendDelay = options.sendDelay || 100;
-  this.retryDelay = options.retryDelay || 2000;
+  this.maxRetries = this.maxRetries || 10;
+  this.retryDelay = options.retryDelay || 10000;
+  this.concurrency = options.concurrency || 25;
+  this.maxMessagesPerSecond = options.maxMessagesPerSecond || 10;
   this.muteConsole = options.muteConsole === true || false;
-  this.isSending = false;
-  this.queue = [];
+
+  this.client = axios.create();
+
+  axiosRetry(this.client, {
+    retries: this.maxRetries,
+    retryDelay: function retryDelay() {
+      return _this.retryDelay;
+    }
+  });
+
+  this.queue = new PQueue({
+    concurrency: this.concurrency,
+    intervalCap: this.maxMessagesPerSecond,
+    interval: 1000
+  });
 }
 
-Logstash.prototype._trySendEvent = function _trySendEvent() {
-  var _this = this;
-
-  if (!this.queue.length || this.isSending) {
-    return;
-  }
-
-  this.isSending = true;
-  var event = this.queue.shift();
-
-  var request = {
+Logstash.prototype._sendEvent = async function _sendEvent(event) {
+  return this.client({
     url: this.url,
-    method: 'post',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     data: event
-  };
-
-  // HTTP request
-  return axios(request).then(function () {
-    _this.isSending = false;
-    _this._trySendEvent();
   }).catch(function (err) {
-    console.error(err);
-
-    // If we could not send the event,
-    // put it back into queue
-    _this.queue.unshift(event);
-
-    _this.isSending = false;
-    setTimeout(_this._trySendEvent.bind(_this), _this.retryDelay);
+    return console.warn("Could not send message to Logstash - [" + err.message + "]");
   });
 };
 
 Logstash.prototype.log = function log(level, message, fields) {
+  var _this2 = this;
+
   var event = { level: level, fields: fields, message: message };
 
-  event['@timestamp'] = new Date().toISOString();
-  event['@tags'] = this.tags;
+  event["@timestamp"] = new Date().toISOString();
+  event["@tags"] = this.tags;
 
   // Navigator metadata
-  if (typeof navigator !== 'undefined') {
+  if (typeof navigator !== "undefined") {
     event.navigator = {
       cookieEnabled: navigator.cookieEnabled,
       geoLocation: navigator.geoLocation,
@@ -79,7 +79,7 @@ Logstash.prototype.log = function log(level, message, fields) {
   }
 
   // Location metadata
-  if (typeof location !== 'undefined') {
+  if (typeof location !== "undefined") {
     event.location = {
       search: location.search,
       pathname: location.pathname,
@@ -91,14 +91,16 @@ Logstash.prototype.log = function log(level, message, fields) {
     };
   }
 
-  this.queue.push(event);
-  this._trySendEvent();
+  // Add to queue
+  this.queue.add(function () {
+    return _this2._sendEvent(event);
+  });
 
   if (this.muteConsole) {
     return;
   }
 
-  var fieldsStr = fields ? " - " + JSON.stringify(fields) : '';
+  var fieldsStr = fields ? " - " + JSON.stringify(fields) : "";
 
   switch (level) {
     case "error":
@@ -113,22 +115,22 @@ Logstash.prototype.log = function log(level, message, fields) {
 };
 
 Logstash.prototype.debug = function debug(message, fields) {
-  this.log('debug', message, fields);
+  this.log("debug", message, fields);
 };
 
 Logstash.prototype.info = function info(message, fields) {
-  this.log('info', message, fields);
+  this.log("info", message, fields);
 };
 
 Logstash.prototype.warn = function warn(message, fields) {
-  this.log('warn', message, fields);
+  this.log("warn", message, fields);
 };
 
 Logstash.prototype.error = function error(err, fields) {
   if (err instanceof Error) {
-    this.log('error', err.message, Object.assign({ stack: err.stack }, fields));
+    this.log("error", err.message, Object.assign({ stack: err.stack }, fields));
   } else {
-    this.log('error', err, fields);
+    this.log("error", err, fields);
   }
 };
 
