@@ -30,19 +30,19 @@ function Logstash(url, tags = [], level = "info", options = {}) {
   this.queue = new PQueue({
     concurrency: this.concurrency,
     intervalCap: this.maxMessagesPerSecond,
-    interval: 1000,
+    interval: 1000
   });
 }
 
-Logstash.prototype._sendEvent = function _sendEvent(event) {
-  console.log("sending");
-
+Logstash.prototype._sendEvent = async function _sendEvent(event) {
   return this.client({
     url: this.url,
     method: "POST",
     headers: { "Content-Type": "application/json" },
     data: event
-  });
+  }).catch(err =>
+    console.warn(`Could not send message to Logstash - [${err.message}]`)
+  );
 };
 
 Logstash.prototype.log = function log(level, message, fields) {
