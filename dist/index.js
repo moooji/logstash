@@ -1,7 +1,6 @@
 "use strict";
 
 var axios = require('axios');
-var loggers = [];
 
 function create(url, tags, level, options) {
   return new Logstash(url, tags, level, options);
