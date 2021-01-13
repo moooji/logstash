@@ -1,7 +1,7 @@
 const createLogstash = require('./src')
 
 // required
-const url = 'https://dsr-logsss.touchtech.com'
+const url = process.env.LOGSTASH_URL
 
 // optional
 const tags = ['production', 'api']
@@ -10,6 +10,6 @@ const level = 'info'
 // Create logger instance
 const logger = createLogstash(url, tags, level)
 
-for (let i = 0; i < 10; i++) {
-  logger.info('new!', { data: 123 })
+for (let i = 0; i < 1000; i++) {
+  logger.info('Hello Logger!', { data: 123 })
 }
