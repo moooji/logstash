@@ -45,10 +45,10 @@ Logstash.prototype.log = function log (level, message, fields) {
   if (typeof navigator !== 'undefined') {
     event.navigator = {
       cookieEnabled: navigator.cookieEnabled,
-      geoLocation: navigator.geoLocation,
+      geoLocation: navigator.geolocation,
       language: navigator.language,
       languages: navigator.languages,
-      online: navigator.online,
+      online: navigator.onLine,
       userAgent: navigator.userAgent,
       platform: navigator.platform,
       vendor: navigator.vendor
