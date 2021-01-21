@@ -1,6 +1,6 @@
 {
   "name": "logstash",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Robust logger for node and the browser that sends log messages to a logstash HTTP endpoint",
   "main": "dist/index.js",
   "scripts": {
