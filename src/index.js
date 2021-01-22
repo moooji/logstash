@@ -1,6 +1,6 @@
 require("isomorphic-fetch");
 
-const pQueue = require("p-queue");
+const { default: pQueue } = require("p-queue");
 const pRetry = require("p-retry");
 
 function create(url, tags, level, options) {
