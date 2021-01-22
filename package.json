@@ -1,11 +1,8 @@
 {
   "name": "logstash",
-  "version": "4.0.2",
+  "version": "4.1.0",
   "description": "Robust logger for node and the browser that sends log messages to a logstash HTTP endpoint",
-  "main": "dist/index.js",
-  "scripts": {
-    "build": "babel src -d dist"
-  },
+  "main": "src/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/moooji/logstash.git"
@@ -28,8 +25,5 @@
     "p-queue": "^6.6.2",
     "p-retry": "^4.2.0"
   },
-  "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-es2015": "^6.24.1"
-  }
+  "devDependencies": {}
 }
