@@ -24,6 +24,5 @@
     "isomorphic-fetch": "^3.0.0",
     "p-queue": "^6.6.2",
     "p-retry": "^4.2.0"
-  },
-  "devDependencies": {}
+  }
 }

@@ -10,6 +10,6 @@ const level = 'info'
 // Create logger instance
 const logger = createLogstash(url, tags, level)
 
-for (let i = 0; i < 1000; i++) {
-  logger.fatal(new Error("Fatal Error!"), { data: 123 })
+for (let i = 0; i < 2; i++) {
+  logger.fatal(new Error("Test!"), { data: 123 })
 }
