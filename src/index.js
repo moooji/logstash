@@ -84,6 +84,9 @@ Logstash.prototype.log = function log(level, message, fields) {
   const fieldsStr = fields ? ` - ${JSON.stringify(fields)}` : "";
 
   switch (level) {
+    case "fatal":
+      console.error(`${message}${fieldsStr}`);
+      break;
     case "error":
       console.error(`${message}${fieldsStr}`);
       break;
@@ -112,6 +115,14 @@ Logstash.prototype.error = function error(err, fields) {
     this.log("error", err.message, Object.assign({ stack: err.stack }, fields));
   } else {
     this.log("error", err, fields);
+  }
+};
+
+Logstash.prototype.fatal = function fatal(err, fields) {
+  if (err instanceof Error) {
+    this.log("fatal", err.message, Object.assign({ stack: err.stack }, fields));
+  } else {
+    this.log("fatal", err, fields);
   }
 };
 
