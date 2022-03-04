@@ -11,5 +11,5 @@ const level = 'info'
 const logger = createLogstash(url, tags, level)
 
 for (let i = 0; i < 1000; i++) {
-  logger.info('Hello Logger!', { data: 123 })
+  logger.fatal(new Error("Fatal Error!"), { data: 123 })
 }
